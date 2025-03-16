@@ -1,8 +1,8 @@
 import sys
-import os
 import xlrd
 import openpyxl
 import unicodecsv
+from os import scandir
 
 def xlsToCsvConvertor (xls_filename):
     # Extract the filename along with path without extension.
@@ -90,9 +90,36 @@ def xlsxToCsvHandler(xls_filename):
         print("Error opening the file.")
         print(sys.exc_info())
 
+
+def fromfolderxlsx(path):
+    # Scan files xlsx in forlder
+    
+    with scandir(path) as files:
+        for file in files:
+            if "xlsx" in file.name:
+                print ((f"{path}/{file.name}"))
+                xlsxToCsvHandler (f"{path}/{file.name}")
+
+def help():
+
+    print """/n/nError detected:
+    Help:
+
+    python xls_xlsx_csv.py file.xlsx # For file
+    python --folder path/to/folder # For folder
+    """
+
 if __name__ == '__main__':
-    print(sys.argv[1].rsplit('/', 1)[-1].rsplit('.', 1)[-1])
-    if((sys.argv[1].rsplit('/', 1)[-1].rsplit('.', 1)[-1]) == "xls"):
-        xlsToCsvConvertor(sys.argv[1])
-    else:
-        xlsxToCsvHandler(sys.argv[1])
+
+    try:
+        print(sys.argv[1].rsplit('/', 1)[-1].rsplit('.', 1)[-1])
+        
+        if sys.argv[1] == "--folder":
+            fromfolderxlsx(sys.argv[2])
+
+        elif((sys.argv[1].rsplit('/', 1)[-1].rsplit('.', 1)[-1]) == "xls"):
+            xlsToCsvConvertor(sys.argv[1])
+        else:
+            xlsxToCsvHandler(sys.argv[1])
+    except:
+        help()
